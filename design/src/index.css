@@ -1,0 +1,127 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+  Vault Design System (A股 / 大A): 黑白黄（OKX-inspired）
+  - Background: near-black
+  - Accent: vivid yellow (sparingly)
+  - Semantic: 红涨(盈利/上涨), 绿跌(亏损/下跌)
+  - Feel: terminal-like, immersive, crisp, minimal
+*/
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --font-sans: "Noto Sans SC", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+}
+
+:root {
+  --radius: 0.9rem;
+}
+
+/* App is dark-first */
+.dark {
+  /* Core */
+  --background: oklch(0.14 0.01 270); /* ~ #0B0C0F */
+  --foreground: oklch(0.985 0 0);
+
+  --card: oklch(0.18 0.01 270); /* ~ #12141A */
+  --card-foreground: oklch(0.985 0 0);
+
+  --popover: oklch(0.18 0.01 270);
+  --popover-foreground: oklch(0.985 0 0);
+
+  --secondary: oklch(0.22 0.01 270);
+  --secondary-foreground: oklch(0.985 0 0);
+
+  --muted: oklch(0.22 0.01 270);
+  --muted-foreground: oklch(0.74 0.01 270); /* ~ #A6A8B1 */
+
+  /* Accent Yellow (#FFD12E-ish) */
+  --primary: oklch(0.88 0.18 90);
+  --primary-foreground: oklch(0.16 0.01 270);
+
+  --accent: oklch(0.88 0.18 90);
+  --accent-foreground: oklch(0.16 0.01 270);
+
+  /* Destructive uses A股下跌绿跌语义不合适；这里仅用于危险操作 */
+  --destructive: oklch(0.62 0.25 25);
+
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 12%);
+  --ring: oklch(0.88 0.18 90 / 60%);
+
+  /* Charts */
+  --chart-1: oklch(0.88 0.18 90); /* yellow accent */
+  --chart-2: oklch(0.63 0.23 25); /* red (上涨/盈利) */
+  --chart-3: oklch(0.75 0.18 155); /* green (下跌/亏损) */
+  --chart-4: oklch(0.8 0.05 270);
+  --chart-5: oklch(0.7 0.03 270);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    font-family: var(--font-sans);
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    min-height: 100vh;
+  }
+}
+
+@layer utilities {
+  .text-mono {
+    font-family: var(--font-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .grain {
+    background-image: radial-gradient(transparent 1px, rgba(255, 255, 255, 0.02) 1px);
+    background-size: 3px 3px;
+  }
+
+  .hairline {
+    box-shadow: inset 0 0 0 1px color-mix(in oklch, white 12%, transparent);
+  }
+
+  .glow-yellow {
+    box-shadow:
+      0 0 0 1px color-mix(in oklch, var(--primary) 35%, transparent),
+      0 10px 30px rgba(0, 0, 0, 0.55);
+  }
+}

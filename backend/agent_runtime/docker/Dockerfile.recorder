@@ -1,0 +1,15 @@
+# Recorder Agent - minimal sandbox image
+FROM python:3.12-slim
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+WORKDIR /app
+
+# No network at runtime; read-only fs
+COPY agents/ /app/agents/
+# Copy agent entry
+COPY agent_runtime/ /app/agent_runtime/
+
+# Agent reads stdin, writes stdout
+ENTRYPOINT ["python", "-m", "agents.recorder.agent"]
