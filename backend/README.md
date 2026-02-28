@@ -162,6 +162,10 @@ backend/
 
 多租户: 所有接口通过 `X-User-Id` Header 区分用户 (缺省 `default`)。
 
+**接口文档（前端对接）**：启动后访问  
+- **Swagger UI**: [http://localhost:8000/docs](http://localhost:8000/docs)  
+- **OpenAPI JSON**: [http://localhost:8000/openapi.json](http://localhost:8000/openapi.json)（可导入 Postman/代码生成）
+
 ## Quick Start
 
 ### 方式一: Docker Compose
