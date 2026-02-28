@@ -3,6 +3,8 @@
   "redis_url": null,
   "agent_mode": "inline",
   "llm": {
+    "base_url": null,
+    "api_key": null,
     "orchestrator": "anthropic/claude-3-5-haiku-20241022",
     "recorder": "anthropic/claude-3-5-haiku-20241022",
     "analyzer_interpret": "anthropic/claude-sonnet-4-20250514",

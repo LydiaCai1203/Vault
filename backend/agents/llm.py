@@ -81,6 +81,8 @@ class LLMGateway:
     ) -> LLMResponse:
         import litellm
 
+        from app.config import get_llm_api_key, get_llm_base_url
+
         kwargs: dict[str, Any] = {
             "model": model,
             "messages": messages,
@@ -89,6 +91,13 @@ class LLMGateway:
         if tools:
             kwargs["tools"] = tools
             kwargs["tool_choice"] = "auto"
+
+        api_key = get_llm_api_key()
+        if api_key is not None:
+            kwargs["api_key"] = api_key
+        api_base = get_llm_base_url()
+        if api_base is not None:
+            kwargs["api_base"] = api_base
 
         response = litellm.completion(**kwargs)
         return LLMResponse.from_litellm(response)

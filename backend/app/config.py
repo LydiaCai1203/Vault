@@ -39,6 +39,16 @@ def get_agent_mode() -> str:
     return _load_config().get("agent_mode", "inline")
 
 
-def get_llm_config() -> dict[str, str]:
-    """LLM model names per agent (orchestrator, recorder, analyzer_interpret, reporter)."""
+def get_llm_config() -> dict[str, Any]:
+    """LLM config: base_url, api_key, and model names per agent (orchestrator, recorder, ...)."""
     return _load_config().get("llm") or {}
+
+
+def get_llm_base_url() -> str | None:
+    """LLM API base URL (e.g. OpenAI-compatible). None = use litellm default."""
+    return get_llm_config().get("base_url") or None
+
+
+def get_llm_api_key() -> str | None:
+    """LLM API key. None = use litellm env default (e.g. OPENAI_API_KEY)."""
+    return get_llm_config().get("api_key") or None
