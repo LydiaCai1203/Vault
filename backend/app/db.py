@@ -46,6 +46,9 @@ class TradeORM(Base):
     entry_reason: Mapped[str] = mapped_column(Text)
     notes: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
+    # 记录时异步写入的入场时刻市场快照（当日 K 线/大盘），复盘用
+    entry_snapshot_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
 

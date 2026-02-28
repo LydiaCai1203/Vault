@@ -1,4 +1,6 @@
-"""Agent layer: Orchestrator, Recorder, Analyzer, Reporter.
+"""Agent layer: LLM-powered Agents only (Orchestrator, Recorder, Reporter).
+
+Analysis computation has been moved to the `analysis/` module.
 
 Architecture:
 - BaseAgent: core perceive-think-act-observe loop (agents/base.py)
@@ -6,7 +8,6 @@ Architecture:
 - LLMGateway: unified LLM calling via litellm (agents/llm.py)
 - Orchestrator: intent routing + sub-agent coordination
 - Recorder: NLU extraction + structured trade recording
-- Analyzer Hub: pure-code routing to Base + Style analyzers
 - Reporter: LLM-powered report generation from analysis data
 """
 

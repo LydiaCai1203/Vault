@@ -5,12 +5,12 @@ Sandbox convention:
 - Output: JSON result to stdout
 - JSONL bidirectional streaming for tool proxying
 
-JSONL message types (Agent → Executor):
+JSONL message types (Agent -> Executor):
   {"type": "tool_call", "tool": "...", "arguments": {...}}
   {"type": "final", "result": {...}}
   {"type": "error", "error": "..."}
 
-JSONL message types (Executor → Agent):
+JSONL message types (Executor -> Agent):
   {"tool": "...", "result": {...}}  (tool result injected)
 """
 
@@ -18,7 +18,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 from enum import Enum
-from typing import Any, Protocol
+from typing import Any
 
 
 class MessageType(str, Enum):
@@ -63,18 +63,3 @@ class AgentResult:
     result: dict[str, Any] | None = None
     error: str | None = None
     need_user_input: str | None = None
-
-
-class StyleAnalyzer(Protocol):
-    """Protocol for style-specific analyzers (technical, value, trend, short_term)."""
-
-    style_name: str
-
-    def analyze_single(self, trade: dict, context: dict) -> dict:
-        """Single-trade style analysis."""
-
-    def analyze_batch(self, trades: list[dict], period: dict) -> dict:
-        """Batch trades style metrics."""
-
-    def get_method_diagnosis(self, trades: list[dict]) -> dict:
-        """Method-dimension diagnosis."""

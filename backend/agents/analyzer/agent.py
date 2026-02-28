@@ -1,6 +1,6 @@
-"""Analyzer Agent entry - receives trades via stdin, returns analysis JSON.
+"""Analyzer sandbox entry - receives trades via stdin, returns analysis JSON.
 
-The Analyzer is NOT an LLM Agent. It is pure code computation routed through the Hub.
+Not an LLM Agent. Pure code computation routed through the Analysis Engine.
 """
 
 from __future__ import annotations
@@ -9,7 +9,7 @@ import json
 import os
 import sys
 
-from .hub import analyze
+from analysis.engine import analyze
 
 
 def main() -> None:

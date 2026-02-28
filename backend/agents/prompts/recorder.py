@@ -40,6 +40,12 @@ SYSTEM_PROMPT = """\
 4. 校验通过后，调用 create_trade 或 update_trade 保存
 5. 如果必填字段缺失，返回 JSON 格式的追问：{"need_user_input": "具体追问内容"}
 
+## 关于 create_trade 返回的 hints
+
+保存成功后，create_trade 可能返回 hints（如 week_trade_count、total_open_position_pct）。
+这是事实性信息，供你选择是否在回复中自然带出一句，例如：「已记录。本周第 4 笔交易。」或「已记录，当前总仓位约 35%。」
+仅作陈述，不要警告、不要批评、不要阻止用户。用户可能已执行完交易，记录是事后补录。
+
 ## 输出格式
 
 完成记录后，返回 JSON：

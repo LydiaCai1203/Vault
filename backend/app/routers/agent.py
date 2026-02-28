@@ -129,9 +129,11 @@ def run_analyzer(
     }
 
     if AGENT_MODE == "inline":
-        from agents.analyzer.hub import analyze
+        from analysis.engine import analyze
+        from data_service.service import enrich_trades
+        enriched = enrich_trades(trades)
         result = analyze(
-            trades,
+            enriched,
             style=payload.style,
             analysis_type=payload.analysis_type,
             trade_id=payload.trade_id,

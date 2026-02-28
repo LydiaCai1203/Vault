@@ -1,5 +1,5 @@
-"""Analyzer: Hub + Base + Style plugins."""
+"""Backward-compatible redirect: analyzer logic moved to analysis/ module."""
 
-from .hub import analyze
+from analysis.engine import analyze
 
 __all__ = ["analyze"]
