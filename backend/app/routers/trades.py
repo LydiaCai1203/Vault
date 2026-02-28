@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 
 from ..db import TradeORM, dumps
 from ..dependencies import get_current_user, get_db, utcnow
-from ..domain.trades import TradeCreate, TradeOut, TradeUpdate
+from ..schemas import TradeCreate, TradeOut, TradeUpdate
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 

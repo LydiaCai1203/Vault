@@ -23,8 +23,12 @@ backend/
 ├── agents/                     # LLM Agent 层 (有 Agent Loop 的模块)
 │   ├── base.py                 # BaseAgent: Perceive → Think → Act → Observe 循环
 │   ├── llm.py                  # LLMGateway: litellm 统一调用 + ModelConfig
-│   ├── tools.py                # Tool 基类: LocalTool / RemoteTool
-│   ├── protocol.py             # JSONL 沙箱通信协议 & 共享类型
+│   ├── protocol.py            # JSONL 沙箱通信协议 & 共享类型
+│   ├── tools/                  # Tool 定义(schema) + 实现(handlers)，一 tool 一文件
+│   │   ├── schema.py           # Tool / RemoteTool / make_remote_tool
+│   │   ├── common.py           # 共享: get_db, trade_to_dict, parse_time 等
+│   │   ├── create_trade.py …   # 各 handler: handle_create_trade 等
+│   │   └── __init__.py         # 统一 register_all(proxy)
 │   ├── prompts/                # 各 Agent 的 System Prompt
 │   │   ├── orchestrator.py
 │   │   ├── recorder.py
@@ -53,9 +57,10 @@ backend/
 │
 ├── agent_runtime/              # Agent 运行时 (沙箱执行 & 工具代理)
 │   ├── executor.py             # SandboxExecutor: Docker/inline 双模式
-│   ├── tool_handlers.py        # ToolProxy 处理函数 (DB 操作/子Agent调用)
 │   ├── queue.py                # Redis 任务队列
 │   └── worker.py               # 后台 Worker: 拉取队列 → 沙箱执行
+│
+│   (Tool 实现见 agents/tools/，一 tool 一文件，由 register_all 注册到 ToolProxy)
 │
 ├── migrations/
 ├── requirements.txt

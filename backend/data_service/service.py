@@ -1,7 +1,7 @@
 """Data Service - high-level API for fetching and enriching trade data.
 
-Combines DB queries (via tool_handlers) with market data enrichment.
-Used by the Orchestrator's tool handlers to prepare data for the Analysis Engine.
+Combines DB queries (via agents.tools handlers) with market data enrichment.
+Used by the Orchestrator tool handlers to prepare data for the Analysis Engine.
 """
 
 from __future__ import annotations

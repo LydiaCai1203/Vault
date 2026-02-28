@@ -21,7 +21,7 @@ from ..dependencies import get_current_user, get_db
 from ..domain.agent import AnalyzerPayload, ChatPayload, RecorderPayload, ReporterPayload
 from agent_runtime.executor import SandboxExecutor, ToolProxy
 from agent_runtime.queue import AgentTask, enqueue, get_result
-from agent_runtime.tool_handlers import register_all
+from agents.tools import register_all
 
 CN_TZ = ZoneInfo("Asia/Shanghai")
 router = APIRouter(prefix="/api/agent", tags=["agent"])
