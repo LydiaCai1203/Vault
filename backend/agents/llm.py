@@ -3,14 +3,15 @@
 from __future__ import annotations
 
 import json
-import os
 from dataclasses import dataclass, field
 from typing import Any
+
+from app.config import get_llm_config
 
 
 @dataclass
 class ModelConfig:
-    """Per-agent model assignment. User-configurable via VAULT_MODEL_* env vars."""
+    """Per-agent model assignment. Read from config.json under "llm"."""
 
     orchestrator: str = "anthropic/claude-3-5-haiku-20241022"
     recorder: str = "anthropic/claude-3-5-haiku-20241022"
@@ -18,12 +19,13 @@ class ModelConfig:
     reporter: str = "anthropic/claude-sonnet-4-20250514"
 
     @classmethod
-    def from_env(cls) -> ModelConfig:
+    def from_config(cls) -> ModelConfig:
+        raw = get_llm_config()
         return cls(
-            orchestrator=os.getenv("VAULT_MODEL_ORCHESTRATOR", cls.orchestrator),
-            recorder=os.getenv("VAULT_MODEL_RECORDER", cls.recorder),
-            analyzer_interpret=os.getenv("VAULT_MODEL_ANALYZER", cls.analyzer_interpret),
-            reporter=os.getenv("VAULT_MODEL_REPORTER", cls.reporter),
+            orchestrator=raw.get("orchestrator", cls.orchestrator),
+            recorder=raw.get("recorder", cls.recorder),
+            analyzer_interpret=raw.get("analyzer_interpret", cls.analyzer_interpret),
+            reporter=raw.get("reporter", cls.reporter),
         )
 
     def for_agent(self, agent_name: str) -> str:
@@ -68,7 +70,7 @@ class LLMGateway:
     """Thin wrapper over litellm.completion with tool support."""
 
     def __init__(self, config: ModelConfig | None = None):
-        self.config = config or ModelConfig.from_env()
+        self.config = config or ModelConfig.from_config()
 
     def call(
         self,

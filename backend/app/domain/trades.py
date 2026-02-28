@@ -1,10 +1,15 @@
+"""交易 (trades) 相关请求/响应与枚举。"""
+
 from __future__ import annotations
 
-from datetime import datetime, date
+from datetime import datetime
 from enum import Enum
-from typing import Optional, List
+from typing import TYPE_CHECKING, List, Optional
 
 from pydantic import BaseModel, Field
+
+if TYPE_CHECKING:
+    from ..db import TradeORM
 
 
 class Market(str, Enum):
@@ -87,70 +92,26 @@ class TradeUpdate(BaseModel):
 class TradeOut(TradeBase):
     id: str
 
-
-class ReviewType(str, Enum):
-    SINGLE = "SINGLE"
-    WEEKLY = "WEEKLY"
-    MONTHLY = "MONTHLY"
-
-
-class ReviewScores(BaseModel):
-    mind: float = Field(ge=0, le=5)
-    method: float = Field(ge=0, le=5)
-    money: float = Field(ge=0, le=5)
-
-
-class Heatmap(BaseModel):
-    rows: List[str]
-    cols: List[str]
-    values: List[List[int]]
-
-
-class ReviewOut(BaseModel):
-    id: str
-    type: ReviewType
-    range_start: date
-    range_end: date
-    sample_count: int
-    win_rate: float
-    rr: float
-    expectancy: float
-    scores: ReviewScores
-    mistakes: List[str]
-    todo: List[str]
-    heatmap: Heatmap
-
-
-class GenerateReviewIn(BaseModel):
-    type: ReviewType = ReviewType.WEEKLY
-    range_start: date
-    range_end: date
-
-
-class ChecklistItem(BaseModel):
-    id: str
-    text: str
-    done: bool = False
-
-
-class ChecklistOut(BaseModel):
-    items: List[ChecklistItem]
-
-
-class EquityPoint(BaseModel):
-    t: datetime
-    equity: float
-
-
-class DashboardSummaryOut(BaseModel):
-    range_start: date
-    range_end: date
-    total_trades: int
-    closed_trades: int
-    win_rate: float
-    exec_score: float = Field(ge=1, le=5)
-    rule_violations: int
-    stop_not_followed: int
-    weekly_return_pct: float
-    max_drawdown_pct: float
-    equity_curve: List[EquityPoint]
+    @classmethod
+    def from_orm(cls, r: "TradeORM") -> TradeOut:
+        from ..db import loads
+        return cls(
+            id=r.id,
+            symbol=r.symbol,
+            name=r.name,
+            market=Market(r.market),
+            direction=Direction(r.direction),
+            status=TradeStatus(r.status),
+            entry_time=r.entry_time,
+            entry_price=r.entry_price,
+            exit_time=r.exit_time,
+            exit_price=r.exit_price,
+            position_pct=r.position_pct,
+            stop_loss=r.stop_loss,
+            pnl_cny=r.pnl_cny,
+            emotion_tags=[EmotionTag(x) if isinstance(x, str) else x for x in loads(r.emotion_tags_json)],
+            rule_flags=[RuleFlag(x) if isinstance(x, str) else x for x in loads(r.rule_flags_json)],
+            tags=loads(r.tags_json),
+            entry_reason=r.entry_reason,
+            notes=r.notes,
+        )

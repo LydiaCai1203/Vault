@@ -5,34 +5,18 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
-from ..db import TradeORM, dumps, loads
+from ..db import TradeORM, dumps
 from ..dependencies import get_current_user, get_db, utcnow
-from ..schemas import TradeCreate, TradeOut, TradeUpdate
+from ..domain.trades import TradeCreate, TradeOut, TradeUpdate
 
 router = APIRouter(prefix="/api/trades", tags=["trades"])
 
 
-def _orm_to_out(r: TradeORM) -> TradeOut:
-    return TradeOut(
-        id=r.id,
-        symbol=r.symbol,
-        name=r.name,
-        market=r.market,
-        direction=r.direction,
-        status=r.status,
-        entry_time=r.entry_time,
-        entry_price=r.entry_price,
-        exit_time=r.exit_time,
-        exit_price=r.exit_price,
-        position_pct=r.position_pct,
-        stop_loss=r.stop_loss,
-        pnl_cny=r.pnl_cny,
-        emotion_tags=loads(r.emotion_tags_json),
-        rule_flags=loads(r.rule_flags_json),
-        tags=loads(r.tags_json),
-        entry_reason=r.entry_reason,
-        notes=r.notes,
-    )
+def _fetch_trade(trade_id: str, db: Session, user_id: str) -> TradeOut:
+    r = db.query(TradeORM).filter(TradeORM.id == trade_id, TradeORM.user_id == user_id).first()
+    if not r:
+        raise HTTPException(404, "trade not found")
+    return TradeOut.from_orm(r)
 
 
 @router.get("", response_model=list[TradeOut])
@@ -47,14 +31,7 @@ def list_trades(
     elif status == "closed":
         q = q.filter(TradeORM.status == "CLOSED")
     rows = q.order_by(TradeORM.entry_time.desc()).all()
-    return [_orm_to_out(r) for r in rows]
-
-
-def _fetch_trade(trade_id: str, db: Session, user_id: str) -> TradeOut:
-    r = db.query(TradeORM).filter(TradeORM.id == trade_id, TradeORM.user_id == user_id).first()
-    if not r:
-        raise HTTPException(404, "trade not found")
-    return _orm_to_out(r)
+    return [TradeOut.from_orm(r) for r in rows]
 
 
 @router.get("/{trade_id}", response_model=TradeOut)

@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from ..db import TradeORM, loads
 from ..dependencies import get_current_user, get_db
-from ..schemas import DashboardSummaryOut, EquityPoint
+from ..domain.dashboard import DashboardSummaryOut, EquityPoint
 
 CN_TZ = ZoneInfo("Asia/Shanghai")
 router = APIRouter(prefix="/api/dashboard", tags=["dashboard"])

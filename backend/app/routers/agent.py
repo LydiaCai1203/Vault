@@ -7,18 +7,18 @@ Two modes:
 
 from __future__ import annotations
 
-import json
-import os
 import uuid
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
+from ..consts import AGENT_MODE, QUEUE_NAME, REDIS_URL, RESULT_PREFIX
+from ..consts.agent import AGENT_MODE_INLINE
 from ..db import TradeORM, loads
 from ..dependencies import get_current_user, get_db
+from ..domain.agent import AnalyzerPayload, ChatPayload, RecorderPayload, ReporterPayload
 from agent_runtime.executor import SandboxExecutor, ToolProxy
 from agent_runtime.queue import AgentTask, enqueue, get_result
 from agent_runtime.tool_handlers import register_all
@@ -29,39 +29,6 @@ router = APIRouter(prefix="/api/agent", tags=["agent"])
 tool_proxy = ToolProxy()
 register_all(tool_proxy)
 executor = SandboxExecutor(tool_proxy=tool_proxy)
-
-REDIS_URL = os.getenv("REDIS_URL")
-QUEUE_NAME = "vault:agent:tasks"
-RESULT_PREFIX = "vault:agent:result:"
-AGENT_MODE = os.getenv("VAULT_AGENT_MODE", "inline")
-
-
-class ChatPayload(BaseModel):
-    """主入口：自然语言对话，由 Orchestrator 路由到记一笔/复盘/查询等。"""
-    input: str = Field(..., description="用户输入的自然语言")
-    conversation: list[dict] | None = Field(None, description="历史消息 [{role, content}]，可选")
-
-
-class RecorderPayload(BaseModel):
-    """直接调用记录 Agent（解析自然语言为结构化交易并保存）。"""
-    input: str = Field(..., description="用户关于交易的描述，如「今天买了比亚迪 230 元 2 成仓」")
-
-
-class AnalyzerPayload(BaseModel):
-    """按日期范围拉取交易并做分析（含市场数据丰富化）。"""
-    range_start: str = Field(..., description="起始日期 YYYY-MM-DD")
-    range_end: str = Field(..., description="截止日期 YYYY-MM-DD")
-    style: str = Field("technical", description="风格: technical | value | trend | short_term")
-    analysis_type: str = Field("batch", description="batch=区间分析, single=单笔需配合 trade_id")
-    trade_id: str | None = Field(None, description="单笔分析时的交易 ID")
-
-
-class ReporterPayload(BaseModel):
-    """根据分析结果生成复盘报告。"""
-    report_type: str = Field("weekly", description="报告类型: weekly | monthly | single")
-    analysis_data: dict | str = Field(default_factory=dict, description="分析结果 JSON，可由 analyzer/run 返回")
-    date_from: str | None = Field(None, description="区间起始日期")
-    date_to: str | None = Field(None, description="区间截止日期")
 
 
 @router.post("/chat")
@@ -132,7 +99,7 @@ def run_analyzer(
         "trade_id": payload.trade_id,
     }
 
-    if AGENT_MODE == "inline":
+    if AGENT_MODE == AGENT_MODE_INLINE:
         from analysis.engine import analyze
         from data_service.service import enrich_trades
         enriched = enrich_trades(trades)
@@ -185,7 +152,7 @@ def get_agent_result(
 
 def _run_agent(agent_type: str, user_id: str, payload: dict) -> dict:
     """Run an agent either inline or in Docker sandbox based on config."""
-    if AGENT_MODE == "inline":
+    if AGENT_MODE == AGENT_MODE_INLINE:
         return executor.spawn_inline(agent_type, user_id, payload)
     task_id = str(uuid.uuid4())
     return executor.spawn(agent_type, user_id, payload, task_id=task_id)

@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from ..db import TradeORM, ReviewORM, ChecklistORM, dumps, loads
 from ..dependencies import get_current_user, get_db, utcnow
-from ..schemas import (
+from ..domain.reviews import (
     GenerateReviewIn,
     Heatmap,
     ReviewOut,

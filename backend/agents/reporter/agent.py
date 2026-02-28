@@ -19,7 +19,7 @@ class ReporterAgent(BaseAgent):
     max_steps = 8
 
     def __init__(self, gateway: LLMGateway | None = None):
-        config = ModelConfig.from_env()
+        config = ModelConfig.from_config()
         self.llm_model = config.reporter
         super().__init__(gateway)
 

@@ -2,16 +2,13 @@
 
 from __future__ import annotations
 
-import os
 import time
+
+from app.consts import QUEUE_NAME, REDIS_URL, RESULT_PREFIX
 
 from .executor import SandboxExecutor, ToolProxy
 from .queue import dequeue, enqueue_result
 from .tool_handlers import register_all
-
-REDIS_URL = os.getenv("REDIS_URL")
-QUEUE_NAME = "vault:agent:tasks"
-RESULT_PREFIX = "vault:agent:result:"
 
 
 def run_worker(poll_interval: float = 1.0) -> None:

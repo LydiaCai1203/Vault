@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from ..db import ChecklistORM
 from ..dependencies import get_current_user, get_db
-from ..schemas import ChecklistItem, ChecklistOut
+from ..domain.checklist import ChecklistItem, ChecklistOut
 
 router = APIRouter(prefix="/api/checklist", tags=["checklist"])
 

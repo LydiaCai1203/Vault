@@ -19,7 +19,7 @@ class OrchestratorAgent(BaseAgent):
     max_steps = 15
 
     def __init__(self, gateway: LLMGateway | None = None):
-        config = ModelConfig.from_env()
+        config = ModelConfig.from_config()
         self.llm_model = config.orchestrator
         super().__init__(gateway)
 

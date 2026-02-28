@@ -1,0 +1,11 @@
+{
+  "database_url": "postgresql+psycopg://vault:vault@localhost:5432/vault",
+  "redis_url": null,
+  "agent_mode": "inline",
+  "llm": {
+    "orchestrator": "anthropic/claude-3-5-haiku-20241022",
+    "recorder": "anthropic/claude-3-5-haiku-20241022",
+    "analyzer_interpret": "anthropic/claude-sonnet-4-20250514",
+    "reporter": "anthropic/claude-sonnet-4-20250514"
+  }
+}
